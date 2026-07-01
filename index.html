@@ -1,10 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Meine Onion-Seite</title>
+  <meta charset="UTF-8">
+  <title>Live Texte</title>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    /* 👇 Styling für Tor Hinweis */
+    .tor {
+      margin-top: 40px;
+      font-size: 14px;
+      color: gray;
+    }
+
+    .tor a {
+      color: purple;
+      text-decoration: none;
+    }
+
+    .tor a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <h1>Hallo Welt!</h1>
-    <p>Das ist meine erste .onion-Webseite.</p>
+
+<h1>Max 10 Zeichen</h1>
+
+<input type="text" id="text" maxlength="10">
+<button onclick="senden()">Senden</button>
+
+<div id="liste"></div>
+
+<!-- 👇 NEU: Tor Hinweis -->
+<div class="tor">
+  <p>Jetzt auch auf Tor erreichbar:</p>
+  <a href="http://2yarlpbj2gqduompe47uhbxnaqaexgsjdapxtk7tjv7nugm344yxhgad.onion/" target="_blank">
+    2yarlpbj2gqduompe47uhbxnaqaexgsjdapxtk7tjv7nugm344yxhgad.onion
+  </a>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC-y0qaVZy40CFvGQW2kzNXrOddVR_cjk",
+    authDomain: "yarl-c8062.firebaseapp.com",
+    databaseURL: "https://yarl-c8062-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "yarl-c8062",
+    storageBucket: "yarl-c8062.firebasestorage.app",
+    messagingSenderId: "464061134888",
+    appId: "1:464061134888:web:4d014d35a6f3de63459d1d"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function senden() {
+    let value = document.getElementById("text").value.trim();
+    if (value === "") return;
+
+    db.ref("texte").push(value);
+    document.getElementById("text").value = "";
+  }
+
+  db.ref("texte").on("value", (snapshot) => {
+    let liste = document.getElementById("liste");
+    liste.innerHTML = "";
+
+    snapshot.forEach((child) => {
+      let p = document.createElement("p");
+      p.textContent = child.val();
+      liste.appendChild(p);
+    });
+  });
+</script>
+
 </body>
 </html>
